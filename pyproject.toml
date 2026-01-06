@@ -29,7 +29,9 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 
-dependencies = ["numpy", "scipy", "pandas", "pyrepseq[full]", "statsmodels", "matplotlib", "seaborn"]
+dependencies = ["numpy", "scipy", "pandas", 
+"pyrepseq[full] @ git+https://github.com/guillametlucia/pyrepseq.git@f17cd5f761c492114a3eff97121abeccc0fff202",
+ "statsmodels", "matplotlib", "seaborn"]
 
 [project.urls]
 "Homepage" = "https://github.com/qimmuno/metaclonotypist"

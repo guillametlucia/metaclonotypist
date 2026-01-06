@@ -33,8 +33,8 @@ def metaclonotypist(df, chain='beta',
     neighbors = nearest_neighbor_tcrdist(df, max_edits=max_edits, max_tcrdist=max_tcrdist, chain=chain)
     return graph_clustering(neighbors, df[node_label], clustering=clustering, **clustering_kwargs)
 
-def metaclonotypist_sceptr(df, chain='beta',
-                    max_edits=2, max_sceptrdist=20,
+def metaclonotypist_plm(df, chain='beta',
+                    max_edits=2, max_torchdist =2.0,
                     clustering='cc', clustering_kwargs=dict(),
                     node_label='bioidentity'):
     """Integrated pipeline for metaclonotype identification.
@@ -47,10 +47,10 @@ def metaclonotypist_sceptr(df, chain='beta',
         The default value of 2 should provide a reasonable starting point
         Set to 1 to speed up neighbor finding in large datasets.
         Caution: Values >2 might slow down neighbor finding a lot.
-    max_sceptrdist: int
-        maximal SCEPTR score used to prune the initial edit distance based neighbors
-        Optimal choices might be between 0 (nearly exact matches only in large datasets)
-        to ~1.5 (to find any clustering in small datasets)
+    max_torchdist: float
+        maximal PLM score used to prune the initial edit distance based neighbors
+        Optimal choices (for SCEPTR) might be between 0 (nearly exact matches only in large datasets)
+        to ~1.5 (to find any clustering in small datasets). Undetermined yet for other PLMs. 
     clustering: str
         choice of clustering algorithm
         see `pyrepseq.graph_clustering` for details
@@ -58,7 +58,7 @@ def metaclonotypist_sceptr(df, chain='beta',
         column name to use for labelling nodes in the resulting graph
         
     """
-    neighbors = nearest_neighbor_sceptrdist(df, max_edits=max_edits, max_sceptrdist=max_sceptrdist, chain=chain)
+    neighbors = nearest_neighbor_generaltorchdist(df, max_edits=max_edits, max_torchdist=max_torchdist, chain=chain)
     return graph_clustering(neighbors, df[node_label], clustering=clustering, **clustering_kwargs)
 
 def flatten_hlas(hla_table):
