@@ -3,7 +3,6 @@ import argparse
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 from importlib.metadata import version
 
 
@@ -30,9 +29,18 @@ def script():
                         choices=['alpha', 'beta'])
     
     parser.add_argument("--tcrdistmethod", default='tcrdist',
-                        help="TCR distance method (default: tcrdist)",
-                        choices=['tcrdist', 'sceptr'])
-    
+                        help="TCR distance method (default: tcrdist).",
+                        choices=['tcrdist', 'plm']
+
+                    )
+    parser.add_argument("--plm_model", default='sceptr.default()',
+                        help="PLM model to use if using a PLM (default: sceptr.default())."/
+                        "Choice must be a class of CachedRepresentationModel from sceptr_publication_analyses."/
+                        "Options include sceptr.default(), hugging_face_lms.ProtBert(), hugging_face_lms.TcrBert()"
+                    )
+    parser.add_argument("--position_wise_distance", type = bool, default = False,
+                        help="Whether to use position-wise distance for PLM (default: False)")
+                        
     parser.add_argument("--mincount", type=int, default=None,
                         help="Minimum count for clones (default: None, no filtering)")
 
@@ -66,6 +74,8 @@ def script():
     chain = args.chain
     chain_suffix = 'A' if chain == 'alpha' else 'B'
     tcrdistmethod = args.tcrdistmethod
+    plm_model = args.plm_model
+    position_wise_distance = args.position_wise_distance
     mincount = args.mincount
     maxtcrdist = args.maxtcrdist
     clustering = args.clustering
@@ -102,16 +112,17 @@ def script():
     hlas = hlas[hlas.columns[hlas.sum(axis=0)>=mindonors]]
 
     print('Starting clustering')
-    if tcrdistmethod == 'sceptr':
-        clusters = metaclonotypist_sceptr(df, chain=chain,
-                               max_sceptrdist=maxtcrdist, max_edits=maxedits,
-                               clustering=clustering, clustering_kwargs=clustering_kwargs)
+    if tcrdistmethod == 'plm':
+        clusters = metaclonotypist_plm(df, chain=chain, max_edits=maxedits,
+                               max_torchdist=maxtcrdist, modelinst= CachedRepresentationModel(
+             plm_model, position_wise_distance=position_wise_distance),clustering=clustering, clustering_kwargs=clustering_kwargs)
     elif tcrdistmethod == 'tcrdist':
         clusters = metaclonotypist(df, chain=chain,
                                max_tcrdist=maxtcrdist, max_edits=maxedits,
                                clustering=clustering, clustering_kwargs=clustering_kwargs)
+        
     else:
-        raise NotImplementedError(f'Unknown TCR distance method: {tcrdist}')
+        raise NotImplementedError(f'Unknown TCR distance method: {tcrdistmethod}')
     clusters['Sample.ID'] = df.loc[clusters.index]['Sample.ID']
 
 

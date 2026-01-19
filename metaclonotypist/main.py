@@ -4,6 +4,7 @@ from statsmodels.stats.proportion import test_proportions_2indep
 from statsmodels.stats.multitest import fdrcorrection
 from pyrepseq import *
 import scipy.sparse
+from sceptr_publication_analyses import CachedRepresentationModel, hugging_face_lms
 
 def metaclonotypist(df, chain='beta',
                     max_edits=2, max_tcrdist=20,
@@ -34,7 +35,8 @@ def metaclonotypist(df, chain='beta',
     return graph_clustering(neighbors, df[node_label], clustering=clustering, **clustering_kwargs)
 
 def metaclonotypist_plm(df, chain='beta',
-                    max_edits=2, max_torchdist =2.0,
+                    max_edits=2, max_torchdist =2.0,  modelinst =  CachedRepresentationModel(
+             hugging_face_lms.ProtBert(), position_wise_distance=False), 
                     clustering='cc', clustering_kwargs=dict(),
                     node_label='bioidentity'):
     """Integrated pipeline for metaclonotype identification.
@@ -58,7 +60,7 @@ def metaclonotypist_plm(df, chain='beta',
         column name to use for labelling nodes in the resulting graph
         
     """
-    neighbors = nearest_neighbor_generaltorchdist(df, max_edits=max_edits, max_torchdist=max_torchdist, chain=chain)
+    neighbors = nearest_neighbor_generaltorchdist(df, chain = chain, max_edits=max_edits, max_torchdist=max_torchdist, modelinst = modelinst)
     return graph_clustering(neighbors, df[node_label], clustering=clustering, **clustering_kwargs)
 
 def flatten_hlas(hla_table):

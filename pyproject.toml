@@ -30,8 +30,9 @@ classifiers = [
 ]
 
 dependencies = ["numpy", "scipy", "pandas", 
-"pyrepseq[full] @ git+https://github.com/guillametlucia/pyrepseq.git@f17cd5f761c492114a3eff97121abeccc0fff202",
- "statsmodels", "matplotlib", "seaborn"]
+"pyrepseq[full] @ git+https://github.com/guillametlucia/pyrepseq.git@adfbe251eadf620bc815bc6786b19c880a59c327",
+ "statsmodels", "matplotlib", "seaborn",
+  "sceptr_publication_analyses @ git+https://github.com/yutanagano/sceptr_publication_analyses.git@main"]
 
 [project.urls]
 "Homepage" = "https://github.com/qimmuno/metaclonotypist"
